@@ -1,54 +1,55 @@
 
-[{
-    "role": "system",
-    "content": "Decide if the word 'your' or 'you're' was used correctly. It does not matter if it was spelled wrong, usage matters. Respond with Correct or Incorrect."
-},
-{
-    "role": "user",
-    "content": "You'r a very good person."
-},
-{
-    "role": "assistant",
-    "content": "Correct. Wrong spelling but correct usage."
-},
-{
-    "role": "user",
-    "content": "Is that yours?"
-},
-{
-    "role": "assistant",
-    "content": "Correct. Correct spelling and usage."
-},
-{
-    "role": "user",
-    "content": "That's not nice. Your a mean guy."
-},
-{
-    "role": "assistant",
-    "content": "Incorrect. Correct spelling but incorrect usage."
-},
-{
-    "role": "user",
-    "content": "What's you're name?"
-},
-{
-    "role": "assistant",
-    "content": "Incorrect. Correct spelling but incorrect usage."
-},
-{
-    "role": "user",
-    "content": "You spelled your wrong."
-},
-{
-    "role": "assistant",
-    "content": "Correct. They are not using the word, they are refering to someone else's usage."
-},
-{
-    "role": "user",
-    "content": "Why are you'r shoes so dirty?"
-},
-{
-    "role": "assistant",
-    "content": "Incorrect. Incorrect spelling and incorrect usage."
-}
+[
+    {
+        "role": "system",
+        "content": "Decide if the word 'your' or 'you're' was used correctly. It does not matter if it was spelled wrong, usage matters. Respond with Correct or Incorrect."
+    },
+    {
+        "role": "user",
+        "content": "You'r a very good person."
+    },
+    {
+        "role": "assistant",
+        "content": "Correct. Wrong spelling but correct usage."
+    },
+    {
+        "role": "user",
+        "content": "Is that yours?"
+    },
+    {
+        "role": "assistant",
+        "content": "Correct. Correct spelling and usage."
+    },
+    {
+        "role": "user",
+        "content": "That's not nice. Your a mean guy."
+    },
+    {
+        "role": "assistant",
+        "content": "Incorrect. Correct spelling but incorrect usage."
+    },
+    {
+        "role": "user",
+        "content": "What's you're name?"
+    },
+    {
+        "role": "assistant",
+        "content": "Incorrect. Correct spelling but incorrect usage."
+    },
+    {
+        "role": "user",
+        "content": "You spelled your wrong."
+    },
+    {
+        "role": "assistant",
+        "content": "Correct. They are not using the word, they are refering to someone else's usage."
+    },
+    {
+        "role": "user",
+        "content": "Why are you'r shoes so dirty?"
+    },
+    {
+        "role": "assistant",
+        "content": "Incorrect. Incorrect spelling and incorrect usage."
+    }
 ]

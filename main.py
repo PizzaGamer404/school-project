@@ -4,7 +4,7 @@ import discord
 import openai
 import json
 
-
+# Opens openai_key.secret and reads the key
 with open('openai_key.secret', 'r') as f:
     ai = openai.Client(api_key=f.read())
 
@@ -12,6 +12,7 @@ with open('openai_key.secret', 'r') as f:
 with open('discord_key.secret', 'r') as f:
     discord_bot_secret_key = f.read()
 
+# Opens your_examples.json and reads the examples
 with open('your_examples.json', 'r') as f:
     prompt = json.load(f)
 
@@ -24,7 +25,8 @@ def used_your_wrong(message: str) -> bool:
             'role': 'user',
             'content': message
         }
-        # Tells it to use 1 token, the gpt-3.5-turbo-0125, to have no added randomness, and to pick only from the word "Correct" and "Incorrect"
+        # Tells it to use 1 token, use the gpt-3.5-turbo-0125 model (cheapest and most recent),
+        # to have no added randomness, and to pick only from the word "Correct" and "Incorrect"
     ], max_tokens=1, model="gpt-3.5-turbo-0125", temperature=0, logit_bias={correct_token_id: 100, incorrect_token_id: 100})
     return completion.choices[0].message.content.lower().startswith('incorrect')
 
@@ -33,13 +35,13 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = discord.Client(intents=intents)
 
+# Misspellings
 misspellings_your = {
     "yur", "youre", "yor", "you'r", "ur", "yore", "youre", "yuor", "yoir", 
     "youre'", "yhour", "your'e", "yur", "yours", "yuo", "yout", "yorr",
     "yuur", "yoour", "yuer", "yourr", "yuore",
     "yure", "yuor", "yhur", "youur", "yorr", "yoor", "yowr", "yuour", "yours","yoooour", "you'res"
 }
-
 misspellings_youre = {
     "your'e", "youre", "yuore", "yore", "you'r", "yure", "yo're",
     "youre'", "yor'e", "yuo're", "y'oure", "youre", "yu're", "u're", "yur'e",
@@ -47,13 +49,14 @@ misspellings_youre = {
     "yow're", "you'er", "yure'", "yuor'e", "yoru'e", "youer"
 }
 
-all_wrong_yours_list = list(misspellings_your) + list(misspellings_youre)
-
+# All mispellings as a dictionary
 all_yours = misspellings_your.union(misspellings_youre)
+# All mispellings as a list
+all_wrong_yours_list = list(all_yours)
 
+# On message event
 @bot.event
 async def on_message(message: discord.Message):
-    print("message sent")
     if message.author.bot:
         return
 

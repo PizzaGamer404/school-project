@@ -1,0 +1,2 @@
+Add a !shame command that uses ChatGPT to mercilessly shame the target for every grammer mistake
+Add a Their, There and They're shamer
