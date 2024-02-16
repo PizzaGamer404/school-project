@@ -54,10 +54,30 @@ all_yours = misspellings_your.union(misspellings_youre)
 # All mispellings as a list
 all_wrong_yours_list = list(all_yours)
 
+async def shamer(message: discord.Message):
+    mentioned = message.mentions
+    # Shame them for improper shaming
+    if len(mentioned) != 1:
+        await message.reply('You need to mention one person to shame. Shame on *you*!')
+        return
+    # Shame themselves
+    if mentioned[0].id == message.author.id:
+        await message.reply('I cannot shame you any more than you shame yourself!')
+        return
+    # Random chance to refuse to shame
+    if random.randrange(5) == 0:
+        await message.reply('I refuse to shame ' + mentioned[0].mention + '! Shame yourself!')
+        return
+    to_shame = mentioned[0]
+
 # On message event
 @bot.event
 async def on_message(message: discord.Message):
     if message.author.bot:
+        return
+    
+    if message.content.startswith('!shame '):
+        await shamer(message)
         return
 
     words = message.content.split()
