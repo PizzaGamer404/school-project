@@ -66,17 +66,17 @@ async def on_message(message: discord.Message):
     said_your = False
     for word in words:
         word_lower = word.lower()
-        if word.lower() in all_yours:
+        if word_lower in all_yours:
             terrible_spelling = True
             said_your = True
             break
-        elif word.lower() == 'your':
+        elif word_lower == 'your':
             said_your = True
             break
-        elif word.lower() == 'you\'re':
+        elif word_lower == 'you\'re':
             said_your = True
             break
-        elif word.lower() == 'yours':
+        elif word_lower == 'yours':
             said_your = True
             break
     if terrible_spelling == True:
