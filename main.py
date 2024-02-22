@@ -6,7 +6,7 @@ import json
 
 # Opens openai_key.secret and reads the key
 with open('openai_key.secret', 'r') as f:
-    ai = openai.Client(api_key=f.read())
+    ai = openai.AsyncClient(api_key=f.read())
 
 # Opens discord_key.secret and reads the key
 with open('discord_key.secret', 'r') as f:
@@ -16,11 +16,14 @@ with open('discord_key.secret', 'r') as f:
 with open('your_examples.json', 'r') as f:
     prompt = json.load(f)
 
-def used_your_wrong(message: str) -> bool:
+with open('shaming_examples.json', 'r') as f:
+    shame_examples = json.load(f)
+
+async def used_your_wrong(message: str) -> bool:
     correct_token_id = 34192
     incorrect_token_id = 41568
     # Asks AI to determine if it's right or wrong. Provides several examples to get a good answer.
-    completion = ai.chat.completions.create(messages=prompt + [
+    completion = await ai.chat.completions.create(messages=prompt + [
         {
             'role': 'user',
             'content': message
@@ -29,6 +32,7 @@ def used_your_wrong(message: str) -> bool:
         # to have no added randomness, and to pick only from the word "Correct" and "Incorrect"
     ], max_tokens=1, model="gpt-3.5-turbo-0125", temperature=0, logit_bias={correct_token_id: 100, incorrect_token_id: 100})
     return completion.choices[0].message.content.lower().startswith('incorrect')
+
 
 # Creates the bot
 intents = discord.Intents.default()
@@ -71,6 +75,18 @@ async def shamer(message: discord.Message):
         return
     
     msg = replied_message.content
+    english_teacher = await ai.chat.completions.create(messages=shame_examples + [
+        {
+            'role': 'user',
+            'content': msg
+        }
+    # ], max_tokens=1024, model="gpt-4-0125-preview", temperature=0)
+    ], max_tokens=1024, model="gpt-3.5-turbo-0125", temperature=0)
+    shame = english_teacher.choices[0].message.content
+    try:
+        await message.reply(shame[:2000])
+    except Exception:
+        await message.channel.send(f'{message.author.mention} {shame}'[:2000])
 
 
 # On message event
@@ -102,14 +118,15 @@ async def on_message(message: discord.Message):
         elif word_lower == 'yours':
             said_your = True
             break
-    if terrible_spelling and said_your:
-        if user_your_wrong(message.content):
-            await message.reply('HOW DO YOU MESS UP ***SO*** BADLY AS TO SPELL '+random.choice(all_wrong_yours_list)+' WRONG?!?! AND YOU USED IT IN THE WRONG CONTEXT?!?!!!! GRAHHHHHHH')
-    elif terrible_spelling == True and not used_your_wrong(message.content):
+    if not said_your:
+        return
+    bad_usage = await used_your_wrong(message.content)
+    if bad_usage and terrible_spelling:
+        await message.reply('HOW DO YOU MESS UP ***SO*** BADLY AS TO SPELL '+random.choice(all_wrong_yours_list).upper()+' WRONG?!?! AND YOU USED IT IN THE WRONG CONTEXT?!?!!!! GRAHHHHHHH')
+    elif terrible_spelling:
         await message.reply('AAAAAAAAAAAAAAAAAAAA WRONG SPELLING!!!! (╯°□°)╯︵ ┻━┻')
-    elif said_your:
-        if used_your_wrong(message.content) and not terrible_spelling:
-            await message.reply('You used the wrong ' + random.choice(all_wrong_yours_list) + '!!!!! (╯°□°)╯︵ ┻━┻')
+    elif bad_usage:
+        await message.reply('You used the wrong ' + random.choice(all_wrong_yours_list) + '!!!!! (╯°□°)╯︵ ┻━┻')
 
 
 # Runs the bot

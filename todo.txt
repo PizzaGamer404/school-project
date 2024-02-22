@@ -1,2 +1,6 @@
 Add a !shame command that uses ChatGPT to mercilessly shame the target for every grammer mistake
 Add a Their, There and They're shamer
+Add a "old-timey-inator". Runs using the .olde command, rewords the replied text to be "old-timey".
+HOORAY
+IT WILL BE EASIER TO TYPE ONCE I GET TO S
+WE HAVE MINIMUM PRODUCT, THIS IS ALL EXTRA STUFF
