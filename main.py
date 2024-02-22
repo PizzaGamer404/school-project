@@ -55,20 +55,23 @@ all_yours = misspellings_your.union(misspellings_youre)
 all_wrong_yours_list = list(all_yours)
 
 async def shamer(message: discord.Message):
-    mentioned = message.mentions
-    # Shame them for improper shaming
-    if len(mentioned) != 1:
-        await message.reply('You need to mention one person to shame. Shame on *you*!')
+    # message.reference contains information on who they are replying to (None if not replying)
+    if message.reference is None:
+        await message.reply('You need to reply to someone to shame. Shame on **you**!')
         return
-    # Shame themselves
-    if mentioned[0].id == message.author.id:
-        await message.reply('I cannot shame you any more than you shame yourself!')
+    try:
+        # Gets the message they are replying to
+        replied_message = await message.channel.fetch_message(message.reference.message_id)
+    # If the message was not found, tell them it wasn't found
+    except discord.NotFound:
+        if random.randrange(3) > 0:
+            await message.reply('Message to shame was not found, but if it was, I am sure it would be very shameful.')
+        else:
+            await message.reply('Message to shame was not found, but if it was, I am sure it would be absolutely perfect.')
         return
-    # Random chance to refuse to shame
-    if random.randrange(5) == 0:
-        await message.reply('I refuse to shame ' + mentioned[0].mention + '! Shame yourself!')
-        return
-    to_shame = mentioned[0]
+    
+    msg = replied_message.content
+
 
 # On message event
 @bot.event
@@ -76,7 +79,7 @@ async def on_message(message: discord.Message):
     if message.author.bot:
         return
     
-    if message.content.startswith('!shame '):
+    if message.content == '!shame':
         await shamer(message)
         return
 
@@ -99,10 +102,13 @@ async def on_message(message: discord.Message):
         elif word_lower == 'yours':
             said_your = True
             break
-    if terrible_spelling == True:
+    if terrible_spelling and said_your:
+        if user_your_wrong(message.content):
+            await message.reply('HOW DO YOU MESS UP ***SO*** BADLY AS TO SPELL '+random.choice(all_wrong_yours_list)+' WRONG?!?! AND YOU USED IT IN THE WRONG CONTEXT?!?!!!! GRAHHHHHHH')
+    elif terrible_spelling == True and not used_your_wrong(message.content):
         await message.reply('AAAAAAAAAAAAAAAAAAAA WRONG SPELLING!!!! (╯°□°)╯︵ ┻━┻')
-    if said_your:
-        if used_your_wrong(message.content):
+    elif said_your:
+        if used_your_wrong(message.content) and not terrible_spelling:
             await message.reply('You used the wrong ' + random.choice(all_wrong_yours_list) + '!!!!! (╯°□°)╯︵ ┻━┻')
 
 
