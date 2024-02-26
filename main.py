@@ -54,8 +54,11 @@ misspellings_youre = {
 }
 misspellings_there = {"thier","thare","thar", "thare","thir" "thayr","thur","therr", "tharee", "thure"
 ,"thhere","thire","therr","thiree","thareh"}
-misspellings_their = {"thier","thare","thar", "thare","thir" "thayr","thur","therr", "tharee", "thure"
+
+misspellings_their = {"thier","thar", "thare","thir" "thayr","thur","therr", "tharee", "thure"
 ,"thhere","thire","therr","thiree","thareh"}
+
+mispelling_theyre = {"thay're","thare","th'eyre",}
 # All mispellings as a dictionary
 all_yours = misspellings_your.union(misspellings_youre)
 # All mispellings as a list
