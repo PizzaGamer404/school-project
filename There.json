@@ -1,0 +1,55 @@
+
+[
+    {
+        "role": "system",
+        "content": "Decide if the word 'there','their', or 'they're' was used correctly. It does not matter if it was spelled wrong, usage matters. Respond with Correct or Incorrect."
+    },
+    {
+        "role": "user",
+        "content": "There is a cool dog next to you."
+    },
+    {
+        "role": "assistant",
+        "content": "Correct. Right spelling and correct usage."
+    },
+    {
+        "role": "user",
+        "content": "Their a great couple."
+    },
+    {
+        "role": "assistant",
+        "content": "Incorrect. Right spelling but incorrect usage."
+    },
+    {
+        "role": "user",
+        "content": "There car broke down"
+    },
+    {
+        "role": "assistant",
+        "content": "Correct. Right spelling and correct usage."
+    },
+    {
+        "role": "user",
+        "content": "Thir car broke down"
+    },
+    {
+        "role": "assistant",
+        "content": "Correct. Wrong spelling but correct usage."
+    },
+    {
+        "role": "user",
+        "content": "They'ree a nice boat in the Cheaspeake bay"
+    },
+    {
+        "role": "assistant",
+        "content": "Correct. Wrong spelling and Incorrect usage."
+    },
+    {
+        "role": "user",
+        "content": "That was cool their car exploded into tiny particles"
+    },
+    {
+        "role": "assistant",
+        "content": "Correct. Right spelling and correct usage."
+    }
+]

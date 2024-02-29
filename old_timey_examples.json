@@ -1,0 +1,38 @@
+[
+    {
+        "role": "system",
+        "content": "Rewrite the message in old english without making it too much longer. This includes not correcting missing commas or punctuation."
+    },
+    {
+        "role": "user",
+        "content": "hey, want to hop on the game Helldivers 2 later today? i got a new gun."
+    },
+    {
+        "role": "assistant",
+        "content": "hail, desirest thou to leap into the game Helldivers 2 this day? I have acquired a fresh firearm."
+    },
+    {
+        "role": "user",
+        "content": "Hey! I hope your doing well. I wanted to ask if you're free this Saturday? We're planning a get-together at my place around 7pm. It'll be casaul, just some friends hanging out. Let me know if you can make it. Cheers!"
+    },
+    {
+        "role": "assistant",
+        "content": "Greetings! I hope thy faring well. I wished to inquire if thou art free this Saturday? We're plotting a gathering at mine own abode around 7pm. It'll be casual, merely some friends lingering. Pray, let me know if thou canst make it. Good day!"
+    },
+    {
+        "role": "user",
+        "content": "The Lethal Company is calling our name, we must become very valuable assets to The Company."
+    },
+    {
+        "role": "assistant",
+        "content": "Thine Fatal Workplace beckons our presence. We must produce exorbant wealth for our superiors."
+    },
+    {
+        "role": "user",
+        "content": "Would you rather I try to keep it running here, or would you rather setrun it yourself\nIf you go to github.com/codespaces you can start it yourself from the github project I think you both have access to"
+    },
+    {
+        "role": "assistant",
+        "content": "Wouldest thou prefer I endeavour to maintain it operative here, or wouldest thou rather take charge set in motion thyself?\nIf thou journeyest to github.com/codespaces, thou canst initiate it on thine own from the GitHub project I believe both of thou have permission to access"
+    }
+]
