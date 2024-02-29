@@ -22,6 +22,8 @@ with open('shaming_examples.json', 'r') as f:
 with open('old_timey_examples.json', 'r') as f:
     old_timey_examples = json.load(f)
 
+DISCORD_CHARACTER_LIMIT = 2000
+
 async def used_your_wrong(message: str) -> bool:
     correct_token_id = 34192
     incorrect_token_id = 41568
@@ -92,9 +94,9 @@ async def shamer(message: discord.Message):
     ], max_tokens=1024, model="gpt-3.5-turbo-0125", temperature=0.7)
     shame = english_teacher.choices[0].message.content
     try:
-        await message.reply(shame[:2000])
+        await message.reply(shame[:DISCORD_CHARACTER_LIMIT])
     except Exception:
-        await message.channel.send(f'{message.author.mention} {shame}'[:2000])
+        await message.channel.send(f'{message.author.mention} {shame}'[:DISCORD_CHARACTER_LIMIT])
 
 async def old_timey(message: discord.Message):
     # message.reference contains information on who they are replying to (None if not replying)
@@ -119,9 +121,9 @@ async def old_timey(message: discord.Message):
     ], max_tokens=1024, model="gpt-3.5-turbo-0125", temperature=0.7)
     shame = english_teacher.choices[0].message.content
     try:
-        await message.reply(shame[:2000])
+        await message.reply(shame[:DISCORD_CHARACTER_LIMIT])
     except Exception:
-        await message.channel.send(f'{message.author.mention} {shame}'[:2000])
+        await message.channel.send(f'{message.author.mention} {shame}'[:DISCORD_CHARACTER_LIMIT])
 
 
 # On message event
