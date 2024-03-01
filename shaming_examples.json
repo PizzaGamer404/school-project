@@ -5,7 +5,7 @@
     },
     {
         "role": "user",
-        "content": "Hey! I hope your doing well. I wanted to ask if your free this Saturday? We're planning a get-together at my place around 7pm. It'll be casaul, just some friends hanging out. Let me know if you can make it. Cheers!"
+        "content": "Message: Hey! I hope your doing well. I wanted to ask if your free this Saturday? We're planning a get-together at my place around 7pm. It'll be casaul, just some friends hanging out. Let me know if you can make it. Cheers!"
     },
     {
         "role": "assistant",
@@ -13,7 +13,7 @@
     },
     {
         "role": "user",
-        "content": "Would you rather I try to keep it running here, or would you rather setrun it yourself\nIf you go to github.com/codespaces you can start it yourself from the github project I think you both have access to"
+        "content": "Message: Would you rather I try to keep it running here, or would you rather setrun it yourself\nIf you go to github.com/codespaces you can start it yourself from the github project I think you both have access to"
     },
     {
         "role": "assistant",

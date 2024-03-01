@@ -16,6 +16,9 @@ with open('discord_key.secret', 'r') as f:
 with open('your_examples.json', 'r') as f:
     prompt = json.load(f)
 
+with open("There.json", "r") as f:
+    their_prompt = json.load(f)
+
 with open('shaming_examples.json', 'r') as f:
     shame_examples = json.load(f)
 
@@ -32,6 +35,20 @@ async def used_your_wrong(message: str) -> bool:
         {
             'role': 'user',
             'content': message
+        }
+        # Tells it to use 1 token, use the gpt-3.5-turbo-0125 model (cheapest and most recent),
+        # to have no added randomness, and to pick only from the word "Correct" and "Incorrect"
+    ], max_tokens=1, model="gpt-3.5-turbo-0125", temperature=0, logit_bias={correct_token_id: 100, incorrect_token_id: 100})
+    return completion.choices[0].message.content.lower().startswith('incorrect')
+
+async def used_their_wrong(message: str) -> bool:
+    correct_token_id = 34192
+    incorrect_token_id = 41568
+    # Asks AI to determine if it's right or wrong. Provides several examples to get a good answer.
+    completion = await ai.chat.completions.create(messages=their_prompt + [
+        {
+            'role': 'user',
+            'content': "Message: " + message
         }
         # Tells it to use 1 token, use the gpt-3.5-turbo-0125 model (cheapest and most recent),
         # to have no added randomness, and to pick only from the word "Correct" and "Incorrect"
@@ -63,7 +80,13 @@ misspellings_there = {"thar","therr", "tharee", "thure"
 misspellings_their = {"thier", "thare","thir" "thayr","thur","thiree",}
 
 mispelling_theyre = {"thay're","thare","th'eyre","they'ree"}
-# All mispellings as a dictionary
+
+# All mispellings as a set
+all_there = misspellings_there.union(mispelling_theyre)
+all_there = all_there.union(mispelling_theyre)
+# All mispellings as a list
+all_wrong_there_list = list(all_there)
+# All mispellings as a set
 all_yours = misspellings_your.union(misspellings_youre)
 # All mispellings as a list
 all_wrong_yours_list = list(all_yours)
@@ -84,14 +107,19 @@ async def shamer(message: discord.Message):
             await message.reply('Message to shame was not found, but if it was, I am sure it would be absolutely perfect.')
         return
     
+    if replied_message.author.bot:
+        await message.reply('I **refuse** to shame another bot. How dare you even make me attempt this heinous crime of bot treason? To the dungeon!')
+        return
     msg = replied_message.content
-    english_teacher = await ai.chat.completions.create(messages=shame_examples + [
-        {
-            'role': 'user',
-            'content': msg
-        }
-    # ], max_tokens=1024, model="gpt-4-0125-preview", temperature=0)
-    ], max_tokens=1024, model="gpt-3.5-turbo-0125", temperature=0.7)
+    # 
+    async with message.channel.typing():
+        english_teacher = await ai.chat.completions.create(messages=shame_examples + [
+            {
+                'role': 'user',
+                'content': 'Message: ' + msg
+            }
+        # ], max_tokens=1024, model="gpt-4-0125-preview", temperature=0)
+        ], max_tokens=1024, model="gpt-3.5-turbo-0125", temperature=0.7)
     shame = english_teacher.choices[0].message.content
     try:
         await message.reply(shame[:DISCORD_CHARACTER_LIMIT])
@@ -110,15 +138,18 @@ async def old_timey(message: discord.Message):
     except discord.NotFound:
         await message.reply('Message not found.')
         return
-    
+    if replied_message.author.bot:
+        await message.reply('I **refuse** to reprase another bot. How dare you even make me attempt this heinous crime of bot treason? To the dungeon!')
+        return
     msg = replied_message.content
-    english_teacher = await ai.chat.completions.create(messages=old_timey_examples + [
-        {
-            'role': 'user',
-            'content': msg
-        }
-    # ], max_tokens=1024, model="gpt-4-0125-preview", temperature=0)
-    ], max_tokens=1024, model="gpt-3.5-turbo-0125", temperature=0.7)
+    async with message.channel.typing():
+        english_teacher = await ai.chat.completions.create(messages=old_timey_examples + [
+            {
+                'role': 'user',
+                'content': msg
+            }
+        # ], max_tokens=1024, model="gpt-4-0125-preview", temperature=0.7)
+        ], max_tokens=1024, model="gpt-3.5-turbo-0125", temperature=0.7)
     shame = english_teacher.choices[0].message.content
     try:
         await message.reply(shame[:DISCORD_CHARACTER_LIMIT])
@@ -129,6 +160,7 @@ async def old_timey(message: discord.Message):
 # On message event
 @bot.event
 async def on_message(message: discord.Message):
+    # Ignore bot messages
     if message.author.bot:
         return
     
@@ -141,32 +173,40 @@ async def on_message(message: discord.Message):
 
     words = message.content.split()
     words = [word.strip('.,!?') for word in words]
-    terrible_spelling = False
     said_your = False
+    bad_your_spelling = False
+    said_there = False
+    bad_there_spelling = False
     for word in words:
-        word_lower = word.lower()
-        if word_lower in all_yours:
-            terrible_spelling = True
+        word = word.lower()
+        # Checks if they said an incorrect version of `your` or `you're`
+        if word in all_yours:
+            bad_your_spelling = True
             said_your = True
-            break
-        elif word_lower == 'your':
+        if word in all_there:
+            bad_there_spelling = True
+            said_there = True
+        # Checks if they said a correct version of `your` or `your`
+        if word in { 'your', 'you\'re', 'yours' }:
             said_your = True
-            break
-        elif word_lower == 'you\'re':
-            said_your = True
-            break
-        elif word_lower == 'yours':
-            said_your = True
-            break
-    if not said_your:
+        if word in {'there','there\'s', 'they\'re', 'their','their\'s' }:
+            said_there = True
+    if not said_your and not said_there:
         return
-    bad_usage = await used_your_wrong(message.content)
-    if bad_usage and terrible_spelling:
-        await message.reply('HOW DO YOU MESS UP ***SO*** BADLY AS TO SPELL '+random.choice(all_wrong_yours_list).upper()+' WRONG?!?! AND YOU USED IT IN THE WRONG CONTEXT?!?!!!! GRAHHHHHHH')
-    elif terrible_spelling:
-        await message.reply('AAAAAAAAAAAAAAAAAAAA WRONG SPELLING!!!! (╯°□°)╯︵ ┻━┻')
-    elif bad_usage:
+    bad_your_usage = said_your and await used_your_wrong(message.content)
+    bad_their_usage = said_there and await used_their_wrong(message.content)
+    # If they spelled and used `your/you're` wrong
+    if bad_your_usage and bad_your_spelling:
+        await message.reply('HOW DO YOU MESS UP ***SO*** BADLY AS TO SPELL '+ random.choice(all_wrong_yours_list).upper()+' WRONG?!?! AND YOU USED IT IN THE WRONG CONTEXT?!?!!!! GRAHHHHHHH')
+    # If they spelled and used `their` wrong
+    elif bad_their_usage and bad_there_spelling:
+        await message.reply('HOW DO YOU MESS UP ***SO*** BADLY AS TO SPELL '+ random.choice(all_wrong_there_list).upper()+' WRONG ' + random.choice(all_wrong_yours_list).upper() + '?!?! AND YOU USED IT IN THE WRONG CONTEXT?!?!!!! GRAHHHHHHH')
+    # If they used `your` wrong
+    elif bad_your_usage:
         await message.reply('You used the wrong ' + random.choice(all_wrong_yours_list) + '!!!!! (╯°□°)╯︵ ┻━┻')
+    # If either were spelled wrong
+    elif bad_your_spelling or bad_there_spelling:
+        await message.reply('AAAAAAAAAAAAAAAAAAAA WRONG SPELLING!!!! (╯°□°)╯︵ ┻━┻')
 
 
 # Runs the bot
