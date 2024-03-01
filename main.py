@@ -16,6 +16,7 @@ with open('discord_key.secret', 'r') as f:
 with open('your_examples.json', 'r') as f:
     prompt = json.load(f)
 
+# Opens the rest of the examples
 with open("There.json", "r") as f:
     their_prompt = json.load(f)
 
@@ -28,6 +29,8 @@ with open('old_timey_examples.json', 'r') as f:
 DISCORD_CHARACTER_LIMIT = 2000
 
 async def used_your_wrong(message: str) -> bool:
+    # ChatGPT responds in bits of text called "Tokens", and these corespond to the words "Correct" and "Incorrect"
+    # It might actually just be the first few letters, I forget
     correct_token_id = 34192
     incorrect_token_id = 41568
     # Asks AI to determine if it's right or wrong. Provides several examples to get a good answer.
@@ -75,14 +78,14 @@ misspellings_youre = {
     "yow're", "you'er", "yure'", "yuor'e", "yoru'e", "youer"
 }
 misspellings_there = {"thar","therr", "tharee", "thure"
-,"thhere","thire","thareh"}
+,"thhere","thire","thareh","ther"}
 
-misspellings_their = {"thier", "thare","thir" "thayr","thur","thiree",}
+misspellings_their = {"thier", "thare","thir", "thayr","thur","thiree",}
 
 mispelling_theyre = {"thay're","thare","th'eyre","they'ree"}
 
 # All mispellings as a set
-all_there = misspellings_there.union(mispelling_theyre)
+all_there = misspellings_there.union(misspellings_their)
 all_there = all_there.union(mispelling_theyre)
 # All mispellings as a list
 all_wrong_there_list = list(all_there)
@@ -170,29 +173,37 @@ async def on_message(message: discord.Message):
     if message.content == '!oldtimey':
         await old_timey(message)
         return
-
+    # Splits the text into words
     words = message.content.split()
+    # Removes punctuation from each word
     words = [word.strip('.,!?') for word in words]
+    # Tracks if they have said "your" / "you're" / "yours" or if they have spelled it wrong
     said_your = False
     bad_your_spelling = False
+    # Tracks if they have said "there" / "their" / "they're" or if they have spelled it wrong
     said_there = False
     bad_there_spelling = False
+    # Loops over words
     for word in words:
+        # Makes the word lowercase
         word = word.lower()
-        # Checks if they said an incorrect version of `your` or `you're`
+        # Checks if they said an incorrect version of `your`, `you're` or `yours`
         if word in all_yours:
             bad_your_spelling = True
             said_your = True
+        # Checks if they said an incorrect version of `there`, `their` or `they're`
         if word in all_there:
             bad_there_spelling = True
             said_there = True
-        # Checks if they said a correct version of `your` or `your`
+        # Checks if they said a correct version of any of the words
         if word in { 'your', 'you\'re', 'yours' }:
             said_your = True
         if word in {'there','there\'s', 'they\'re', 'their','their\'s' }:
             said_there = True
     if not said_your and not said_there:
         return
+    # Uses AI to see if they said either word in the wrong context
+    # The and statement is a nice way to first check if they said the word. If false, it automatically stops before asking the AI since it already knows it will be false.
     bad_your_usage = said_your and await used_your_wrong(message.content)
     bad_their_usage = said_there and await used_their_wrong(message.content)
     # If they spelled and used `your/you're` wrong
